@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="layout-header">
-      <div class="logo">飞象企服</div>
+      <div class="logo">飞象企服 管理员：{{ userName }}<button @click="acceptUser">获取管理员</button></div>
       <ul class="sub-apps">
         <li v-for="item in microApps" :class="{active: item.activeRule === current}" :key="item.name" @click="goto(item)">{{ item.name }}</li>
       </ul>
@@ -12,13 +12,14 @@
 
 <script>
 import microApps from './micro-app'
+import store from './store'
 
 export default {
   name: 'App',
   data () {
     return {
       microApps,
-      current: '/sub-vue'
+      current: '/#/micrApp/sub-vue'
     }
   },
   methods: {
@@ -27,6 +28,15 @@ export default {
       this.current = item.activeRule
       history.pushState(null, item.activeRule, item.activeRule) // 没引入路由，所以不能用路由切换
     },
+    acceptUser () {
+      let userName = 'jiapandong'
+      store.setGlobalState({userName})
+    }
+  },
+  computed: {
+    userName () {
+      return store.getGlobalState('userName')
+    }
   },
   created() {
     const path = window.location.pathname

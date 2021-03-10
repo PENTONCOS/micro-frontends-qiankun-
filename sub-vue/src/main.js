@@ -7,7 +7,24 @@ Vue.config.productionTip = false;
 
 let install = null;
 function render(props = {}) {
-  const { container, routerBase } = props;
+  console.log("props",props)
+  const { container, routerBase, getGlobalState, onGlobalStateChange } = props;
+  onGlobalStateChange((state, prev) => {
+    // state: 变更后的状态; prev 变更前的状态
+    console.log(state, prev);
+    console.log("getGlobalState",getGlobalState("userName"))
+
+    const router = new VueRouter({
+      base: window.__POWERED_BY_QIANKUN__ ? routerBase : process.env.BASE_URL,
+      mode: "history",
+      routes
+    });
+    install = new Vue({
+      router,
+      render: h => h(App, { props: props }) // 将主应用传过来的props传递进App.vue中
+    }).$mount(container ? container.querySelector("#app") : "#app");
+  });
+
   const router = new VueRouter({
     base: window.__POWERED_BY_QIANKUN__ ? routerBase : process.env.BASE_URL,
     mode: "history",
@@ -15,7 +32,7 @@ function render(props = {}) {
   });
   install = new Vue({
     router,
-    render: h => h(App)
+    render: h => h(App, { props: props }) // 将主应用传过来的props传递进App.vue中
   }).$mount(container ? container.querySelector("#app") : "#app");
 }
 if (window.__POWERED_BY_QIANKUN__) {
